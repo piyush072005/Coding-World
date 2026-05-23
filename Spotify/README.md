@@ -6,7 +6,7 @@ UsTunes is a Spotify-inspired web music player focused on one core feature: exac
 
 - Frontend: React + Vite + Tailwind CSS (v4)
 - Backend: Node.js + Express + Socket.io
-- Database: SQLite via better-sqlite3
+- Database: MongoDB via Mongoose
 
 ## Features
 
@@ -43,11 +43,12 @@ cd ../server
 copy .env.example .env
 ```
 
-Add your Google OAuth client ID to both the server and client environments:
+Add your Google OAuth client ID and MongoDB URI to the server and client environments:
 
 ```bash
 # server/.env
 GOOGLE_CLIENT_ID=your-google-oauth-client-id.apps.googleusercontent.com
+MONGODB_URI=mongodb://127.0.0.1:27017/ustunes
 
 # client/.env
 VITE_GOOGLE_CLIENT_ID=your-google-oauth-client-id.apps.googleusercontent.com

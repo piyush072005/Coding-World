@@ -4,25 +4,27 @@ const express = require('express');
 const cors = require('cors');
 const http = require('http');
 const { Server } = require('socket.io');
-const { OAuth2Client } = require('google-auth-library');
+const { connectMongo } = require('./db/connection');
 const {
-  createUser,
-  getUserById,
-  addFriend,
-  createFriendRequest,
-  acceptFriendRequest,
-  upsertGoogleUser,
+  createLocalUser,
+  loginByNumericId,
+  loginWithGoogleCredential,
+  serializeUser,
+  findUserByNumericId,
+} = require('./controllers/authController');
+const {
   areFriends,
+  addMutualAcceptedFriendship,
+  acceptFriendRequest,
+  createFriendRequest,
   listFriends,
-} = require('./db');
+} = require('./controllers/friendController');
 
 const app = express();
 const server = http.createServer(app);
 
 const clientOrigin = process.env.CLIENT_ORIGIN || 'http://localhost:5173';
 const port = Number(process.env.PORT || 4000);
-const googleClientId = process.env.GOOGLE_CLIENT_ID || '';
-const googleOAuthClient = googleClientId ? new OAuth2Client(googleClientId) : null;
 
 app.use(cors({ origin: clientOrigin }));
 app.use(express.json());
@@ -36,15 +38,16 @@ const io = new Server(server, {
 const onlineUsers = new Map();
 const activeSessions = new Map();
 
-function emitFriendListUpdate(userId) {
+async function emitFriendListUpdate(userId) {
   const socketId = onlineUsers.get(userId);
   if (!socketId) {
     return;
   }
 
+  const friends = await listFriends(userId);
   io.to(socketId).emit('friends:list-updated', {
     userId,
-    friends: listFriends(userId),
+    friends,
   });
 }
 
@@ -72,36 +75,27 @@ app.post('/api/auth/google', async (req, res) => {
     return res.status(400).json({ error: 'Google credential is required.' });
   }
 
-  if (!googleOAuthClient) {
-    return res.status(500).json({ error: 'GOOGLE_CLIENT_ID is not configured.' });
-  }
-
   try {
-    const ticket = await googleOAuthClient.verifyIdToken({
-      idToken: String(credential),
-      audience: googleClientId,
-    });
-
-    const profile = ticket.getPayload();
-    if (!profile?.sub) {
-      return res.status(401).json({ error: 'Invalid Google credential.' });
+    const { user, created } = await loginWithGoogleCredential(credential);
+    return res.json({ user, created });
+  } catch (error) {
+    if (error?.statusCode) {
+      return res.status(error.statusCode).json({ error: error.message });
     }
 
-    const { user, created } = upsertGoogleUser(profile);
-    return res.json({ user, created });
-  } catch (_error) {
     return res.status(401).json({ error: 'Google sign-in failed.' });
   }
 });
 
-app.post('/api/users/login', (req, res) => {
+app.post('/api/users/login', async (req, res) => {
   const { name, userId } = req.body || {};
 
   if (userId) {
-    const user = getUserById(String(userId));
+    const user = await loginByNumericId(String(userId));
     if (!user) {
       return res.status(404).json({ error: 'User not found for that ID.' });
     }
+
     return res.json({ user });
   }
 
@@ -109,22 +103,31 @@ app.post('/api/users/login', (req, res) => {
     return res.status(400).json({ error: 'Name must be at least 2 characters.' });
   }
 
-  const user = createUser(String(name));
+  const { user } = await createLocalUser(String(name));
   return res.status(201).json({ user });
 });
 
-app.get('/api/friends/:userId', (req, res) => {
+app.get('/api/friends/:userId', async (req, res) => {
   const { userId } = req.params;
-  const user = getUserById(userId);
+  const user = await findUserByNumericId(userId);
 
   if (!user) {
     return res.status(404).json({ error: 'User not found.' });
   }
 
-  return res.json({ friends: listFriends(userId) });
+  try {
+    const friends = await listFriends(userId);
+    return res.json({ friends });
+  } catch (error) {
+    if (error?.statusCode) {
+      return res.status(error.statusCode).json({ error: error.message });
+    }
+
+    throw error;
+  }
 });
 
-app.post('/api/friends/add', (req, res) => {
+app.post('/api/friends/add', async (req, res) => {
   const { userId, friendId } = req.body || {};
 
   if (!userId || !friendId) {
@@ -138,24 +141,29 @@ app.post('/api/friends/add', (req, res) => {
     return res.status(400).json({ error: 'IDs must be exactly 10 digits.' });
   }
 
-  if (normalizedUserId === normalizedFriendId) {
-    return res.status(400).json({ error: 'You cannot add yourself.' });
+  try {
+    const user = await findUserByNumericId(normalizedUserId);
+    const friend = await findUserByNumericId(normalizedFriendId);
+
+    if (!user || !friend) {
+      return res.status(404).json({ error: 'User not found.' });
+    }
+
+    const { friendship } = await addMutualAcceptedFriendship(normalizedUserId, normalizedFriendId);
+    await emitFriendListUpdate(normalizedUserId);
+    await emitFriendListUpdate(normalizedFriendId);
+
+    return res.json({ success: true, friend: serializeUser(friend), friendship });
+  } catch (error) {
+    if (error?.statusCode) {
+      return res.status(error.statusCode).json({ error: error.message });
+    }
+
+    throw error;
   }
-
-  const user = getUserById(normalizedUserId);
-  const friend = getUserById(normalizedFriendId);
-
-  if (!user || !friend) {
-    return res.status(404).json({ error: 'User not found.' });
-  }
-
-  addFriend(normalizedUserId, normalizedFriendId);
-  emitFriendListUpdate(normalizedUserId);
-  emitFriendListUpdate(normalizedFriendId);
-  return res.json({ success: true, friend });
 });
 
-app.post('/api/friends/request', (req, res) => {
+app.post('/api/friends/request', async (req, res) => {
   const { fromUserId, toUserId } = req.body || {};
 
   if (!fromUserId || !toUserId) {
@@ -169,38 +177,46 @@ app.post('/api/friends/request', (req, res) => {
     return res.status(400).json({ error: 'IDs must be exactly 10 digits.' });
   }
 
-  if (senderId === receiverId) {
-    return res.status(400).json({ error: 'You cannot send a request to yourself.' });
+  try {
+    const request = await createFriendRequest(senderId, receiverId);
+
+    if (request?.alreadyFriends) {
+      return res.status(409).json({ error: 'Users are already friends.' });
+    }
+
+    const sender = await findUserByNumericId(senderId);
+    const receiver = await findUserByNumericId(receiverId);
+
+    if (!sender || !receiver) {
+      return res.status(404).json({ error: 'User not found.' });
+    }
+
+    const receiverSocketId = onlineUsers.get(receiverId);
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit('friends:request-received', {
+        fromUserId: senderId,
+        fromName: sender.name,
+      });
+    }
+
+    const senderSocketId = onlineUsers.get(senderId);
+    if (senderSocketId) {
+      io.to(senderSocketId).emit('friends:request-sent', {
+        toUserId: receiverId,
+      });
+    }
+
+    return res.json({ success: true });
+  } catch (error) {
+    if (error?.statusCode) {
+      return res.status(error.statusCode).json({ error: error.message });
+    }
+
+    throw error;
   }
-
-  const sender = getUserById(senderId);
-  const receiver = getUserById(receiverId);
-
-  if (!sender || !receiver) {
-    return res.status(404).json({ error: 'User not found.' });
-  }
-
-  createFriendRequest(senderId, receiverId);
-
-  const receiverSocketId = onlineUsers.get(receiverId);
-  if (receiverSocketId) {
-    io.to(receiverSocketId).emit('friends:request-received', {
-      fromUserId: senderId,
-      fromName: sender.name,
-    });
-  }
-
-  const senderSocketId = onlineUsers.get(senderId);
-  if (senderSocketId) {
-    io.to(senderSocketId).emit('friends:request-sent', {
-      toUserId: receiverId,
-    });
-  }
-
-  return res.json({ success: true });
 });
 
-function acceptFriendRequestHandler(req, res) {
+async function acceptFriendRequestHandler(req, res) {
   const { userId, requesterId } = req.body || {};
 
   if (!userId || !requesterId) {
@@ -214,54 +230,53 @@ function acceptFriendRequestHandler(req, res) {
     return res.status(400).json({ error: 'IDs must be exactly 10 digits.' });
   }
 
-  if (acceptingUserId === requestingUserId) {
-    return res.status(400).json({ error: 'Invalid friend request.' });
-  }
-
-  const acceptingUser = getUserById(acceptingUserId);
-  const requestingUser = getUserById(requestingUserId);
-
-  if (!acceptingUser || !requestingUser) {
-    return res.status(404).json({ error: 'User not found.' });
-  }
-
   try {
-    acceptFriendRequest(requestingUserId, acceptingUserId);
+    const acceptingUser = await findUserByNumericId(acceptingUserId);
+    const requestingUser = await findUserByNumericId(requestingUserId);
+
+    if (!acceptingUser || !requestingUser) {
+      return res.status(404).json({ error: 'User not found.' });
+    }
+
+    const result = await acceptFriendRequest(requestingUserId, acceptingUserId);
+
+    await emitFriendListUpdate(acceptingUserId);
+    await emitFriendListUpdate(requestingUserId);
+
+    const requesterSocketId = onlineUsers.get(requestingUserId);
+    if (requesterSocketId) {
+      io.to(requesterSocketId).emit('friends:request-accepted', {
+        byUserId: acceptingUserId,
+        byName: acceptingUser.name,
+      });
+    }
+
+    const accepterSocketId = onlineUsers.get(acceptingUserId);
+    if (accepterSocketId) {
+      io.to(accepterSocketId).emit('friends:request-accepted', {
+        byUserId: acceptingUserId,
+        friendId: requestingUserId,
+        friendName: requestingUser.name,
+      });
+    }
+
+    return res.json({ success: true, friend: serializeUser(requestingUser), friendship: result.friendship });
   } catch (error) {
-    if (error.code === 'REQUEST_NOT_FOUND') {
+    if (error?.statusCode) {
+      return res.status(error.statusCode).json({ error: error.message });
+    }
+
+    if (error?.code === 'REQUEST_NOT_FOUND') {
       return res.status(404).json({ error: 'Friend request not found.' });
     }
+
     throw error;
   }
-
-  emitFriendListUpdate(acceptingUserId);
-  emitFriendListUpdate(requestingUserId);
-
-  const requesterSocketId = onlineUsers.get(requestingUserId);
-  if (requesterSocketId) {
-    io.to(requesterSocketId).emit('friends:request-accepted', {
-      byUserId: acceptingUserId,
-      byName: acceptingUser.name,
-    });
-  }
-
-  const accepterSocketId = onlineUsers.get(acceptingUserId);
-  if (accepterSocketId) {
-    io.to(accepterSocketId).emit('friends:request-accepted', {
-      byUserId: acceptingUserId,
-      friendId: requestingUserId,
-      friendName: requestingUser.name,
-    });
-  }
-
-  return res.json({ success: true, friend: requestingUser });
 }
 
 app.post('/api/friends/accept', acceptFriendRequestHandler);
 
-app.post('/api/friends/requests/accept', (req, res) => {
-  return acceptFriendRequestHandler(req, res);
-});
+app.post('/api/friends/requests/accept', (req, res) => acceptFriendRequestHandler(req, res));
 
 io.on('connection', (socket) => {
   const userId = String(socket.handshake.query.userId || '');
@@ -274,7 +289,7 @@ io.on('connection', (socket) => {
   onlineUsers.set(userId, socket.id);
   socket.data.userId = userId;
 
-  socket.on('friends:invite', ({ toUserId }) => {
+  socket.on('friends:invite', async ({ toUserId }) => {
     const fromUserId = socket.data.userId;
     const targetUserId = String(toUserId || '');
 
@@ -283,26 +298,30 @@ io.on('connection', (socket) => {
       return;
     }
 
-    if (!areFriends(fromUserId, targetUserId)) {
-      socket.emit('error:message', { error: 'You can only invite existing friends.' });
-      return;
-    }
+    try {
+      if (!(await areFriends(fromUserId, targetUserId))) {
+        socket.emit('error:message', { error: 'You can only invite existing friends.' });
+        return;
+      }
 
-    const targetSocketId = onlineUsers.get(targetUserId);
-    if (!targetSocketId) {
-      socket.emit('error:message', { error: 'Friend is offline.' });
-      return;
-    }
+      const targetSocketId = onlineUsers.get(targetUserId);
+      if (!targetSocketId) {
+        socket.emit('error:message', { error: 'Friend is offline.' });
+        return;
+      }
 
-    const fromUser = getUserById(fromUserId);
-    io.to(targetSocketId).emit('friends:invite-received', {
-      fromUserId,
-      fromName: fromUser?.name || 'Friend',
-    });
-    socket.emit('friends:invite-sent', { toUserId: targetUserId });
+      const fromUser = await findUserByNumericId(fromUserId);
+      io.to(targetSocketId).emit('friends:invite-received', {
+        fromUserId,
+        fromName: fromUser?.name || 'Friend',
+      });
+      socket.emit('friends:invite-sent', { toUserId: targetUserId });
+    } catch (error) {
+      socket.emit('error:message', { error: error.message || 'Socket error' });
+    }
   });
 
-  socket.on('session:accept', ({ fromUserId }) => {
+  socket.on('session:accept', async ({ fromUserId }) => {
     const toUserId = socket.data.userId;
     const inviterUserId = String(fromUserId || '');
 
@@ -311,45 +330,54 @@ io.on('connection', (socket) => {
       return;
     }
 
-    if (!areFriends(toUserId, inviterUserId)) {
-      socket.emit('error:message', { error: 'Users must be friends to listen together.' });
-      return;
+    try {
+      if (!(await areFriends(toUserId, inviterUserId))) {
+        socket.emit('error:message', { error: 'Users must be friends to listen together.' });
+        return;
+      }
+
+      const inviterSocketId = onlineUsers.get(inviterUserId);
+      if (!inviterSocketId) {
+        socket.emit('error:message', { error: 'Inviter is no longer online.' });
+        return;
+      }
+
+      const sessionId = `session_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+      const room = sessionId;
+
+      const session = {
+        users: [inviterUserId, toUserId],
+        state: {
+          trackIndex: 0,
+          currentTime: 0,
+          isPlaying: false,
+          updatedAt: Date.now(),
+        },
+      };
+
+      activeSessions.set(sessionId, session);
+
+      socket.join(room);
+      const inviterSocket = io.sockets.sockets.get(inviterSocketId);
+      inviterSocket?.join(room);
+
+      const safeSession = getSafeSession(sessionId);
+      io.to(room).emit('session:started', safeSession);
+    } catch (error) {
+      socket.emit('error:message', { error: error.message || 'Socket error' });
     }
-
-    const inviterSocketId = onlineUsers.get(inviterUserId);
-    if (!inviterSocketId) {
-      socket.emit('error:message', { error: 'Inviter is no longer online.' });
-      return;
-    }
-
-    const sessionId = `session_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
-    const room = sessionId;
-
-    const session = {
-      users: [inviterUserId, toUserId],
-      state: {
-        trackIndex: 0,
-        currentTime: 0,
-        isPlaying: false,
-        updatedAt: Date.now(),
-      },
-    };
-
-    activeSessions.set(sessionId, session);
-
-    socket.join(room);
-    const inviterSocket = io.sockets.sockets.get(inviterSocketId);
-    inviterSocket?.join(room);
-
-    const safeSession = getSafeSession(sessionId);
-    io.to(room).emit('session:started', safeSession);
   });
 
-  socket.on('friends:refresh', () => {
-    socket.emit('friends:list-updated', {
-      userId: socket.data.userId,
-      friends: listFriends(socket.data.userId),
-    });
+  socket.on('friends:refresh', async () => {
+    try {
+      const friends = await listFriends(socket.data.userId);
+      socket.emit('friends:list-updated', {
+        userId: socket.data.userId,
+        friends,
+      });
+    } catch (error) {
+      socket.emit('error:message', { error: error.message || 'Socket error' });
+    }
   });
 
   socket.on('session:update', ({ sessionId, patch }) => {
@@ -409,6 +437,15 @@ io.on('connection', (socket) => {
   });
 });
 
-server.listen(port, () => {
-  console.log(`UsTunes API listening on http://localhost:${port}`);
+async function start() {
+  await connectMongo();
+
+  server.listen(port, () => {
+    console.log(`UsTunes API listening on http://localhost:${port}`);
+  });
+}
+
+start().catch((error) => {
+  console.error('Failed to start UsTunes API:', error);
+  process.exit(1);
 });
