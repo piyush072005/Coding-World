@@ -1,0 +1,30 @@
+# Week 1 Java Project — Environment Requirements
+# Project: Number Guessing Game (DecodeLabs_Java_P1)
+# Note: This is a pure Java project with no pip/Maven dependencies.
+#       This file documents the runtime and tooling requirements.
+
+# --- Runtime ---
+java>=11
+# Recommended: JDK 17 or JDK 21 for best compatibility
+
+# --- Build Tools (optional) ---
+# No Maven, Gradle, or external JARs required.
+# Compile and run with standard JDK tools: javac, java
+
+# --- Standard Library Classes (built-in, no install needed) ---
+# java.util.Random       — random number generation (1-100)
+# java.util.Scanner      — console input from System.in
+# java.util.InputMismatchException — input validation handling
+
+# --- Source File ---
+# Main class: DecodeLabs_Java_P1.java
+
+# --- IDE / Editor (pick one) ---
+# VS Code with Extension Pack for Java
+# IntelliJ IDEA (Community or Ultimate)
+# Eclipse IDE for Java Developers
+# Any text editor + command-line JDK
+
+# --- Verification Commands ---
+# java -version
+# javac -version
