@@ -7,6 +7,12 @@ A console-based Java application that calculates a student's total marks, averag
 
 ---
 
+## 🖼 Screenshot
+
+![Student Grade Calculator – Sample Run](screenshot.png)
+
+---
+
 ## 📋 Overview
 
 | Field | Value |
