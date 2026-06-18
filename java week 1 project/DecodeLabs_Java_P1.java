@@ -80,11 +80,11 @@ public class DecodeLabs_Java_P1 {
             System.out.print("Play Again? [Y/N]: ");
             String response = scanner.nextLine().trim().toUpperCase();
 
-            if (response.equals("Y") || response.equals("YES")) {
+            if (response.equals("Y") || response.equals("YES") || response.equals("y") || response.equals("yes")) {
                 System.out.println();
                 return true;
             }
-            if (response.equals("N") || response.equals("NO")) {
+            if (response.equals("N") || response.equals("NO") || response.equals("n") || response.equals("no")) {
                 return false;
             }
 
