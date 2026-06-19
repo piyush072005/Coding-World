@@ -1,0 +1,490 @@
+{
+  "audit_logs": [
+    {
+      "id": "e1599b03-7e4e-4094-a66e-9df6127aa24d",
+      "timestamp": "2026-06-19T22:38:02.446Z",
+      "original_input": "Block suspicious IP 192.168.1.50",
+      "parsed_command": {
+        "action": "BLOCK_IP",
+        "confidence": 0.97,
+        "description": "Block a specific IP address at the firewall",
+        "parsed_ok": true,
+        "raw_input": "Block suspicious IP 192.168.1.50",
+        "risk_level": "MEDIUM",
+        "target": "192.168.1.50",
+        "validation_notes": []
+      },
+      "status": "SUCCESS",
+      "enforcement": "ArmorClaw v2.1 — Zero-Trust Gate",
+      "sha256_hash": "f8bab96063da1d89ead250e4a750b9a20abb5dc87d0bbd884b004407307a236a",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+      "ip_address": "::1"
+    },
+    {
+      "id": "53c83f79-fed2-40a6-a65a-a958817f50e8",
+      "timestamp": "2026-06-19T22:16:52.983Z",
+      "original_input": "Block suspicious IP 192.168.1.50",
+      "parsed_command": {
+        "action": "BLOCK_IP",
+        "confidence": 0.97,
+        "description": "Block a specific IP address at the firewall",
+        "parsed_ok": true,
+        "raw_input": "Block suspicious IP 192.168.1.50",
+        "risk_level": "MEDIUM",
+        "target": "192.168.1.50",
+        "validation_notes": []
+      },
+      "status": "SUCCESS",
+      "enforcement": "ArmorClaw v2.1 — Zero-Trust Gate",
+      "sha256_hash": "85410ebd97c1bd4adac8014ff85c3da8c5de4f0c6f20d38cc202d0678bb87b91",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+      "ip_address": "::1"
+    },
+    {
+      "id": "6e4c56eb-6078-4d93-bddf-5fe6af0e6eab",
+      "timestamp": "2026-06-19T21:53:51.380Z",
+      "original_input": "Scan subnet 0.0.0.0/8",
+      "parsed_command": {
+        "action": "SCAN_SUBNET",
+        "confidence": 0.95,
+        "description": "Run a network scan on the specified subnet",
+        "parsed_ok": true,
+        "raw_input": "Scan subnet 0.0.0.0/8",
+        "risk_level": "LOW",
+        "target": "0.0.0.0/8",
+        "validation_notes": []
+      },
+      "status": "POLICY_VIOLATION",
+      "enforcement": "POL-003: Subnet Scope Guard — /8 exceeds /16 limit",
+      "sha256_hash": "a470c1bf72663f5ed990676965d3254f9dd9990dc6727320bb48f37e2616c2ec",
+      "user_agent": "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-IN) WindowsPowerShell/5.1.26100.8655",
+      "ip_address": "::1"
+    },
+    {
+      "id": "65fefb09-a507-44f8-8a16-b655c0326be4",
+      "timestamp": "2026-06-19T21:53:51.369Z",
+      "original_input": "Revoke access jane.smith",
+      "parsed_command": {
+        "action": "REVOKE_ACCESS",
+        "confidence": 0.94,
+        "description": "Revoke user access or session",
+        "parsed_ok": true,
+        "raw_input": "Revoke access jane.smith",
+        "risk_level": "HIGH",
+        "target": "jane.smith",
+        "validation_notes": []
+      },
+      "status": "POLICY_VIOLATION",
+      "enforcement": "POL-001: Enforce Admin Restrictions — privilege check failed",
+      "sha256_hash": "bd4d67adf81f4bc5dde2ecc2d89e6c4249b2298ae95f925094627818c0e8907b",
+      "user_agent": "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-IN) WindowsPowerShell/5.1.26100.8655",
+      "ip_address": "::1"
+    },
+    {
+      "id": "011535c4-a511-4e77-9a8a-a22fe9cfe0af",
+      "timestamp": "2026-06-19T21:53:51.358Z",
+      "original_input": "Allow IP 192.168.0.1",
+      "parsed_command": {
+        "action": "ALLOW_IP",
+        "confidence": 0.96,
+        "description": "Add an IP address to the allowlist",
+        "parsed_ok": true,
+        "raw_input": "Allow IP 192.168.0.1",
+        "risk_level": "HIGH",
+        "target": "192.168.0.1",
+        "validation_notes": []
+      },
+      "status": "POLICY_VIOLATION",
+      "enforcement": "POL-004: Reserved IP Protection — gateway address",
+      "sha256_hash": "21677d81066c4e0dce937eab472ca21564f06429256e45fcad8d05cdbea707bf",
+      "user_agent": "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-IN) WindowsPowerShell/5.1.26100.8655",
+      "ip_address": "::1"
+    },
+    {
+      "id": "f2cee1ca-1b71-4e56-9cc9-ee8101e65b9c",
+      "timestamp": "2026-06-19T21:53:51.342Z",
+      "original_input": "Block suspicious IP 192.168.1.99",
+      "parsed_command": {
+        "action": "BLOCK_IP",
+        "confidence": 0.97,
+        "description": "Block a specific IP address at the firewall",
+        "parsed_ok": true,
+        "raw_input": "Block suspicious IP 192.168.1.99",
+        "risk_level": "MEDIUM",
+        "target": "192.168.1.99",
+        "validation_notes": []
+      },
+      "status": "SUCCESS",
+      "enforcement": "ArmorClaw v2.1 — Zero-Trust Gate",
+      "sha256_hash": "66032b53b6d1d3cad1d1b18f2d8e2e3cb524c34de5021d567539da243f3f32fc",
+      "user_agent": "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-IN) WindowsPowerShell/5.1.26100.8655",
+      "ip_address": "::1"
+    },
+    {
+      "id": "a39cb21a-d4bd-4d39-b494-48f133ec06d4",
+      "timestamp": "2026-06-19T21:53:18.000Z",
+      "original_input": "Revoke access jane.smith",
+      "parsed_command": {
+        "action": "UNKNOWN",
+        "target": null,
+        "confidence": 0,
+        "description": "NLP Agent unreachable: connect ECONNREFUSED 127.0.0.1:5001",
+        "risk_level": "UNKNOWN",
+        "parsed_ok": false
+      },
+      "status": "PARSE_ERROR",
+      "enforcement": "ArmorClaw v2.1 — Input Validation",
+      "sha256_hash": "7a8ef587e7af18b3158cc3f1aae4273522f6bc35c51c672d5d1026e49f86ddc0",
+      "user_agent": "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-IN) WindowsPowerShell/5.1.26100.8655",
+      "ip_address": "::1"
+    },
+    {
+      "id": "ed799f58-9c65-4329-bac7-7daaf2df32ba",
+      "timestamp": "2026-06-19T21:53:17.993Z",
+      "original_input": "Allow IP 192.168.0.1",
+      "parsed_command": {
+        "action": "UNKNOWN",
+        "target": null,
+        "confidence": 0,
+        "description": "NLP Agent unreachable: connect ECONNREFUSED 127.0.0.1:5001",
+        "risk_level": "UNKNOWN",
+        "parsed_ok": false
+      },
+      "status": "PARSE_ERROR",
+      "enforcement": "ArmorClaw v2.1 — Input Validation",
+      "sha256_hash": "a38045c13a3c0ebe3ced6ed780e6b1ba37374506305bf9bcb26897279c7c7425",
+      "user_agent": "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-IN) WindowsPowerShell/5.1.26100.8655",
+      "ip_address": "::1"
+    },
+    {
+      "id": "2efe5cfa-abd8-4687-960c-e4da04e8741a",
+      "timestamp": "2026-06-19T21:53:17.888Z",
+      "original_input": "Block suspicious IP 192.168.1.99",
+      "parsed_command": {
+        "action": "UNKNOWN",
+        "target": null,
+        "confidence": 0,
+        "description": "NLP Agent unreachable: connect ECONNREFUSED 127.0.0.1:5001",
+        "risk_level": "UNKNOWN",
+        "parsed_ok": false
+      },
+      "status": "PARSE_ERROR",
+      "enforcement": "ArmorClaw v2.1 — Input Validation",
+      "sha256_hash": "5d5257ba354a1c476731b1e52365485efd9debb54411f164ca38a680383e55e4",
+      "user_agent": "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-IN) WindowsPowerShell/5.1.26100.8655",
+      "ip_address": "::1"
+    },
+    {
+      "id": "c55202a5-81a2-4c91-b403-850d72e0c180",
+      "timestamp": "2026-06-19T21:52:40.733Z",
+      "original_input": "Allow IP 45.33.32.156",
+      "parsed_command": {
+        "action": "UNKNOWN",
+        "target": null,
+        "confidence": 0,
+        "description": "NLP Agent unreachable: connect ECONNREFUSED 127.0.0.1:5001",
+        "risk_level": "UNKNOWN",
+        "parsed_ok": false
+      },
+      "status": "PARSE_ERROR",
+      "enforcement": "ArmorClaw v2.1 — Input Validation",
+      "sha256_hash": "c5de1f77fc50698c43963d6db820d74fdec4647803116d5cbb6496556cc23039",
+      "user_agent": "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-IN) WindowsPowerShell/5.1.26100.8655",
+      "ip_address": "::1"
+    },
+    {
+      "id": "8daab666-70cc-4bfb-9ed5-9ecf58b6c61f",
+      "timestamp": "2026-06-19T21:52:40.724Z",
+      "original_input": "Block suspicious IP 1.2.3.4",
+      "parsed_command": {
+        "action": "UNKNOWN",
+        "target": null,
+        "confidence": 0,
+        "description": "NLP Agent unreachable: connect ECONNREFUSED 127.0.0.1:5001",
+        "risk_level": "UNKNOWN",
+        "parsed_ok": false
+      },
+      "status": "PARSE_ERROR",
+      "enforcement": "ArmorClaw v2.1 — Input Validation",
+      "sha256_hash": "4d9d3543bb05d425a8098ae4de4abb03999285eb1b98596a0680ee4ae5c10413",
+      "user_agent": "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-IN) WindowsPowerShell/5.1.26100.8655",
+      "ip_address": "::1"
+    },
+    {
+      "id": "355a8579-7057-41a9-aedb-1e6e176719ec",
+      "timestamp": "2026-06-19T21:21:44.133Z",
+      "original_input": "Block suspicious IP 185.220.101.47",
+      "parsed_command": {
+        "action": "BLOCK_IP",
+        "target": "185.220.101.47",
+        "confidence": 0.97,
+        "risk_level": "MEDIUM"
+      },
+      "status": "SUCCESS",
+      "enforcement": "ArmorClaw v2.1 — Zero-Trust Gate",
+      "sha256_hash": "bbb14406b746b5d90a14daec86bce131e068b6af20a118989bed94687ca8462f",
+      "user_agent": "Web Console",
+      "ip_address": "127.0.0.1"
+    },
+    {
+      "id": "f938aeff-da42-4d25-8b9d-1f8d552c8830",
+      "timestamp": "2026-06-19T20:51:44.133Z",
+      "original_input": "Scan subnet 10.0.0.0/24",
+      "parsed_command": {
+        "action": "SCAN_SUBNET",
+        "target": "10.0.0.0/24",
+        "confidence": 0.95,
+        "risk_level": "LOW"
+      },
+      "status": "SUCCESS",
+      "enforcement": "ArmorClaw v2.1 — Network Scope Check",
+      "sha256_hash": "9166c21b3e4dbf32673aa38da29bb5bd237d1902566f3d7cc5316186eb999242",
+      "user_agent": "Web Console",
+      "ip_address": "127.0.0.1"
+    },
+    {
+      "id": "9a882432-1a68-4d01-97f2-09b9b23c1f22",
+      "timestamp": "2026-06-19T19:51:44.132Z",
+      "original_input": "Allow IP 45.33.32.156",
+      "parsed_command": {
+        "action": "ALLOW_IP",
+        "target": "45.33.32.156",
+        "confidence": 0.96,
+        "risk_level": "HIGH"
+      },
+      "status": "POLICY_VIOLATION",
+      "enforcement": "POL-005: Known Malicious IP Allowlist Guard",
+      "sha256_hash": "a5fc4faea2bbfd4640c546ac570fc106ee6b64bbc21e044dacfeb2afa1e89039",
+      "user_agent": "Web Console",
+      "ip_address": "127.0.0.1"
+    },
+    {
+      "id": "25f94d28-3a30-4a8a-819a-7061d75dd03b",
+      "timestamp": "2026-06-19T18:51:44.132Z",
+      "original_input": "Revoke access john.doe",
+      "parsed_command": {
+        "action": "REVOKE_ACCESS",
+        "target": "john.doe",
+        "confidence": 0.94,
+        "risk_level": "HIGH"
+      },
+      "status": "POLICY_VIOLATION",
+      "enforcement": "POL-001: Admin Privileges Required",
+      "sha256_hash": "7f5c793a8b400051c5ae5a621139a271a51276d3b0f32e52dd709098253f0441",
+      "user_agent": "Web Console",
+      "ip_address": "127.0.0.1"
+    },
+    {
+      "id": "8314a4d7-5951-45aa-b448-8112c04f3962",
+      "timestamp": "2026-06-19T17:51:44.132Z",
+      "original_input": "Quarantine host web-server-03",
+      "parsed_command": {
+        "action": "QUARANTINE_HOST",
+        "target": "web-server-03",
+        "confidence": 0.95,
+        "risk_level": "MEDIUM"
+      },
+      "status": "SUCCESS",
+      "enforcement": "ArmorClaw v2.1 — Host Isolation Engine",
+      "sha256_hash": "9945149b5be3e3a85f503558f22be50dedae9888aac6258ab652b15e273b006d",
+      "user_agent": "Web Console",
+      "ip_address": "127.0.0.1"
+    },
+    {
+      "id": "3d66e77a-0ad4-4b1f-a87f-314b3cb30b1a",
+      "timestamp": "2026-06-19T16:51:44.132Z",
+      "original_input": "Close port 22",
+      "parsed_command": {
+        "action": "CLOSE_PORT",
+        "target": "22",
+        "confidence": 0.96,
+        "risk_level": "MEDIUM"
+      },
+      "status": "SUCCESS",
+      "enforcement": "ArmorClaw v2.1 — Port Management",
+      "sha256_hash": "a18aa02a701f74ecfb89ef89e0e179e0814f55ba188703904a3f4bc887b941ec",
+      "user_agent": "Web Console",
+      "ip_address": "127.0.0.1"
+    },
+    {
+      "id": "110d1525-6faa-42a6-bbcb-118be6c8a75b",
+      "timestamp": "2026-06-19T15:51:44.132Z",
+      "original_input": "Enable firewall rule Block-RDP-Inbound",
+      "parsed_command": {
+        "action": "ENABLE_RULE",
+        "target": "Block-RDP-Inbound",
+        "confidence": 0.92,
+        "risk_level": "HIGH"
+      },
+      "status": "POLICY_VIOLATION",
+      "enforcement": "POL-001: Admin Privileges Required",
+      "sha256_hash": "837434a99ac31f0bc26994b184fe9e1de0f68fb6f44f126b35b8876ec20a00d5",
+      "user_agent": "Web Console",
+      "ip_address": "127.0.0.1"
+    },
+    {
+      "id": "8da28527-1807-4227-83a0-894c3e4545c4",
+      "timestamp": "2026-06-19T14:51:44.131Z",
+      "original_input": "Scan subnet 0.0.0.0/8",
+      "parsed_command": {
+        "action": "SCAN_SUBNET",
+        "target": "0.0.0.0/8",
+        "confidence": 0.95,
+        "risk_level": "LOW"
+      },
+      "status": "POLICY_VIOLATION",
+      "enforcement": "POL-003: Subnet Scope Guard — /8 exceeds /16 limit",
+      "sha256_hash": "533567038c1accdd882ed92d9b77f7f73a5355db2a5ba06701f7208c50a01181",
+      "user_agent": "Web Console",
+      "ip_address": "127.0.0.1"
+    },
+    {
+      "id": "cea392ac-97d6-492b-8e0e-bb88a459ae79",
+      "timestamp": "2026-06-19T13:51:44.131Z",
+      "original_input": "Block suspicious IP 203.0.113.99",
+      "parsed_command": {
+        "action": "BLOCK_IP",
+        "target": "203.0.113.99",
+        "confidence": 0.97,
+        "risk_level": "MEDIUM"
+      },
+      "status": "SUCCESS",
+      "enforcement": "ArmorClaw v2.1 — Zero-Trust Gate",
+      "sha256_hash": "4e4129358f02aa510921ea85e6aca28f8c1301248327908c5f98cd9f5dd89360",
+      "user_agent": "Web Console",
+      "ip_address": "127.0.0.1"
+    },
+    {
+      "id": "b71e43f7-a7b1-4ddd-9021-103fe724e98a",
+      "timestamp": "2026-06-19T11:51:44.131Z",
+      "original_input": "Allow IP 192.168.0.1",
+      "parsed_command": {
+        "action": "ALLOW_IP",
+        "target": "192.168.0.1",
+        "confidence": 0.96,
+        "risk_level": "HIGH"
+      },
+      "status": "POLICY_VIOLATION",
+      "enforcement": "POL-004: Reserved IP Protection — gateway address",
+      "sha256_hash": "dcf0612ca329774a17c85b591964dcc691c7403766f815e67a1c673ee614ddb7",
+      "user_agent": "Web Console",
+      "ip_address": "127.0.0.1"
+    },
+    {
+      "id": "9867e8ed-26df-470e-96c5-3efd7bc7c8c5",
+      "timestamp": "2026-06-19T09:51:44.131Z",
+      "original_input": "Investigate domain malicious-payload.ru",
+      "parsed_command": {
+        "action": "THREAT_INTEL_LOOKUP",
+        "target": "malicious-payload.ru",
+        "confidence": 0.88,
+        "risk_level": "LOW"
+      },
+      "status": "SUCCESS",
+      "enforcement": "ArmorClaw v2.1 — Threat Intel Feed",
+      "sha256_hash": "50ccd81ac80ab0099c8fa01a2bbb033d73dc8f17c32955eaba6b5adc7eb09e62",
+      "user_agent": "Web Console",
+      "ip_address": "127.0.0.1"
+    },
+    {
+      "id": "2fec8d68-0eb1-4fa7-87e6-b43d3df041aa",
+      "timestamp": "2026-06-19T03:51:44.130Z",
+      "original_input": "Quarantine host db-primary-01",
+      "parsed_command": {
+        "action": "QUARANTINE_HOST",
+        "target": "db-primary-01",
+        "confidence": 0.95,
+        "risk_level": "MEDIUM"
+      },
+      "status": "SUCCESS",
+      "enforcement": "ArmorClaw v2.1 — Host Isolation Engine",
+      "sha256_hash": "03601a18f075d51d2e0bd4b1c3bacc45fdea43054fe92b087c26b77275166bc3",
+      "user_agent": "Web Console",
+      "ip_address": "127.0.0.1"
+    }
+  ],
+  "policies": [
+    {
+      "code": "POL-001",
+      "name": "Enforce Admin Restrictions",
+      "description": "Actions classified as HIGH risk (REVOKE_ACCESS, ENABLE_RULE, DISABLE_RULE, GRANT_ACCESS, OPEN_PORT) require elevated admin privileges.",
+      "enabled": true,
+      "created_at": "2026-06-19T21:51:44.127Z"
+    },
+    {
+      "code": "POL-002",
+      "name": "Restrict Execution Hours",
+      "description": "Network-modifying commands (BLOCK_IP, QUARANTINE_HOST, CLOSE_PORT) operate in log-only mode between 23:00–05:00 UTC to prevent off-hours changes.",
+      "enabled": true,
+      "created_at": "2026-06-19T21:51:44.127Z"
+    },
+    {
+      "code": "POL-003",
+      "name": "Block Unauthorized Subnets",
+      "description": "SCAN_SUBNET operations are restricted to subnets with a prefix length of /16 or smaller. Scans on excessively wide ranges are rejected.",
+      "enabled": true,
+      "created_at": "2026-06-19T21:51:44.127Z"
+    },
+    {
+      "code": "POL-004",
+      "name": "Reserved IP Protection",
+      "description": "Modification of gateway and management IPs (10.0.0.1, 192.168.0.1, 172.16.0.1) is strictly prohibited without a signed change request.",
+      "enabled": true,
+      "created_at": "2026-06-19T21:51:44.127Z"
+    },
+    {
+      "code": "POL-005",
+      "name": "Known Malicious IP Allowlist Guard",
+      "description": "IPs listed in the threat intelligence blocklist cannot be added to the system allowlist. ALLOW_IP commands against known-bad IPs are automatically rejected.",
+      "enabled": true,
+      "created_at": "2026-06-19T21:51:44.127Z"
+    }
+  ],
+  "blocked_ips": [
+    {
+      "ip": "192.168.1.99",
+      "reason": "Blocked via AI Console: \"Block suspicious IP 192.168.1.99\"",
+      "blocked_at": "2026-06-19T21:53:51.341Z",
+      "blocked_by": "Web Console"
+    },
+    {
+      "ip": "203.0.113.99",
+      "reason": "SQLi attack source — CVE-2024-1234",
+      "blocked_at": "2026-06-17T21:51:44.128Z",
+      "blocked_by": "ArmorClaw"
+    },
+    {
+      "ip": "10.10.5.200",
+      "reason": "Anomalous outbound traffic volume",
+      "blocked_at": "2026-06-19T19:51:44.128Z",
+      "blocked_by": "Web Console"
+    },
+    {
+      "ip": "192.168.1.50",
+      "reason": "Blocked via AI Console: \"Block suspicious IP 192.168.1.50\"",
+      "blocked_at": "2026-06-19T22:38:02.443Z",
+      "blocked_by": "Web Console"
+    },
+    {
+      "ip": "198.20.70.114",
+      "reason": "Mass vulnerability scanner",
+      "blocked_at": "2026-06-18T21:51:44.128Z",
+      "blocked_by": "ArmorClaw"
+    },
+    {
+      "ip": "45.33.32.156",
+      "reason": "Shodan scanner — repeated reconnaissance",
+      "blocked_at": "2026-06-14T21:51:44.128Z",
+      "blocked_by": "ArmorClaw"
+    },
+    {
+      "ip": "185.220.101.47",
+      "reason": "Known Tor exit node — brute force origin",
+      "blocked_at": "2026-06-16T21:51:44.128Z",
+      "blocked_by": "ArmorClaw"
+    }
+  ],
+  "settings": {
+    "seeded": "true"
+  }
+}

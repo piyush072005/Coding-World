@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoTrace — Your Carbon Footprint Tracker</title>
+    <meta name="description" content="Track, understand, and reduce your carbon footprint with personalized daily insights and actionable habit changes.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,700;1,9..144,300&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ─── Ambient Background ─── -->
+<div class="bg-canvas">
+    <div class="bg-gradient"></div>
+    <canvas id="particle-canvas"></canvas>
+</div>
+
+<!-- ─── Splash Screen ─── -->
+<div class="splash" id="splash">
+    <div class="splash-inner">
+        <div class="splash-icon">🌿</div>
+        <div class="splash-title">Eco<span>Trace</span></div>
+        <p class="splash-tagline">Track. Reduce. Make it count.</p>
+        <div class="splash-loader">
+            <div class="loader-dot"></div>
+            <div class="loader-dot"></div>
+            <div class="loader-dot"></div>
+        </div>
+    </div>
+</div>
+
+<!-- ─── Root App ─── -->
+<div id="app" class="app">
+
+    <!-- ══════════════════════════════════════════
+         SCREEN: ONBOARDING
+    ══════════════════════════════════════════ -->
+    <div class="screen" id="screen-onboarding">
+        <div class="ob-wrap">
+            <div class="ob-logo">
+                <div class="logo-pill">🌿</div>
+                <span class="logo-wordmark">Eco<em>Trace</em></span>
+            </div>
+            <div class="ob-card" id="ob-card"><!-- JS fills --></div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         SCREEN: MAIN APP
+    ══════════════════════════════════════════ -->
+    <div class="screen" id="screen-main">
+
+        <!-- Top Bar -->
+        <header class="topbar" id="topbar">
+            <div class="topbar-logo">
+                <div class="logo-pill sm">🌿</div>
+                <span class="logo-wordmark sm">Eco<em>Trace</em></span>
+            </div>
+            <div class="topbar-right">
+                <div class="streak-chip" id="header-streak">🔥 <span id="hdr-streak-val">0</span></div>
+                <div class="topbar-avatar" id="topbar-avatar" onclick="navTo('profile')">🌱</div>
+            </div>
+        </header>
+
+        <!-- ─── Pages ─── -->
+        <!-- HOME -->
+        <section class="page active" id="page-home">
+            <div class="page-scroll">
+
+                <div class="greeting">
+                    <p class="greet-sub" id="greet-sub">Good morning</p>
+                    <h1 class="greet-main">Every action <span>counts</span> 🌍</h1>
+                </div>
+
+                <!-- Hero Score Card -->
+                <div class="hero-card">
+                    <div class="hero-ring-wrap">
+                        <svg width="100" height="100" viewBox="0 0 100 100" class="ring-svg">
+                            <defs>
+                                <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#40916C"/>
+                                    <stop offset="100%" stop-color="#74C69D"/>
+                                </linearGradient>
+                            </defs>
+                            <circle class="ring-track" cx="50" cy="50" r="42"/>
+                            <circle class="ring-fill" id="hero-ring" cx="50" cy="50" r="42"
+                                stroke="url(#g1)" stroke-dasharray="264" stroke-dashoffset="264"/>
+                        </svg>
+                        <div class="ring-center">
+                            <span class="ring-val" id="hero-score">—</span>
+                            <span class="ring-unit">kg CO₂</span>
+                        </div>
+                    </div>
+                    <div class="hero-info">
+                        <p class="hero-label" id="hero-label">Your baseline</p>
+                        <p class="hero-desc">Daily carbon footprint</p>
+                        <div class="hero-chip" id="hero-chip">📉 — below global avg</div>
+                    </div>
+                    <div class="hero-glow"></div>
+                </div>
+
+                <!-- Insight Banner -->
+                <div class="insight-banner" id="insight-banner">
+                    <div class="ib-left-bar"></div>
+                    <div>
+                        <p class="ib-label">💡 Today's Insight</p>
+                        <p class="ib-text" id="insight-text">Loading personalized insight…</p>
+                    </div>
+                </div>
+
+                <!-- Stats Strip -->
+                <div class="stats-strip">
+                    <div class="stat-tile amber">
+                        <span class="stat-v" id="st-streak">0</span>
+                        <span class="stat-l">🔥 Streak</span>
+                    </div>
+                    <div class="stat-tile green">
+                        <span class="stat-v" id="st-saved">0</span>
+                        <span class="stat-l">kg Saved</span>
+                    </div>
+                    <div class="stat-tile">
+                        <span class="stat-v" id="st-actions">0</span>
+                        <span class="stat-l">Actions</span>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="sect-hdr">
+                    <span class="sect-title">Quick Actions</span>
+                    <span class="sect-link" onclick="navTo('log')">See all →</span>
+                </div>
+                <div class="quick-grid" id="quick-grid"><!-- JS --></div>
+
+                <!-- Translation -->
+                <div class="sect-hdr" style="margin-top:20px;">
+                    <span class="sect-title">Today means…</span>
+                </div>
+                <div class="trans-banner" id="home-trans">
+                    <span class="trans-emoji" id="home-trans-emoji">🌳</span>
+                    <p class="trans-phrase" id="home-trans-text">Log an action to see your impact in real terms.</p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- LOG -->
+        <section class="page" id="page-log">
+            <div class="page-scroll">
+                <div class="greeting">
+                    <p class="greet-sub">Track your impact</p>
+                    <h1 class="greet-main">Daily <span>Actions</span></h1>
+                </div>
+                <div class="log-progress-card">
+                    <p class="lp-label">☑️ Today's Progress</p>
+                    <p class="lp-text">
+                        Logged <strong id="lp-count">0</strong> actions ·
+                        Saved <strong id="lp-saved">0 kg CO₂</strong>
+                    </p>
+                    <div class="lp-bar-wrap">
+                        <div class="lp-bar" id="lp-bar" style="width:0%"></div>
+                    </div>
+                </div>
+                <div class="log-list" id="log-list"><!-- JS --></div>
+            </div>
+        </section>
+
+        <!-- INSIGHTS -->
+        <section class="page" id="page-insights">
+            <div class="page-scroll">
+                <div class="greeting">
+                    <p class="greet-sub">Your impact story</p>
+                    <h1 class="greet-main">Carbon <span>Insights</span></h1>
+                </div>
+
+                <!-- Weekly chart -->
+                <div class="chart-card">
+                    <p class="cc-title">Weekly CO₂ Saved</p>
+                    <p class="cc-sub">Kilograms reduced vs. your baseline</p>
+                    <div class="cc-wrap" style="height:160px">
+                        <canvas id="weekly-chart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Doughnut + breakdown -->
+                <div class="chart-card">
+                    <p class="cc-title">Emission Sources</p>
+                    <p class="cc-sub">Your footprint by category</p>
+                    <div class="cat-row">
+                        <div class="donut-wrap" style="width:120px;height:120px;flex-shrink:0;">
+                            <canvas id="pie-chart"></canvas>
+                        </div>
+                        <div class="cat-list" id="cat-list"><!-- JS --></div>
+                    </div>
+                </div>
+
+                <!-- Translation switcher -->
+                <div class="chart-card">
+                    <p class="cc-title">Your savings translated</p>
+                    <p class="cc-sub">Total CO₂ saved in relatable terms</p>
+                    <div class="trans-tabs" id="trans-tabs">
+                        <button class="ttab active" data-mode="nature"  onclick="switchTrans('nature',this)">🌳 Nature</button>
+                        <button class="ttab"        data-mode="travel"  onclick="switchTrans('travel',this)">🚗 Travel</button>
+                        <button class="ttab"        data-mode="energy"  onclick="switchTrans('energy',this)">💡 Energy</button>
+                    </div>
+                    <div class="trans-result" id="trans-result">
+                        <span class="tr-emoji" id="tr-emoji">🌳</span>
+                        <p class="tr-text" id="tr-text">Log your first action to see its real-world equivalent.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHALLENGES -->
+        <section class="page" id="page-challenges">
+            <div class="page-scroll">
+                <div class="greeting">
+                    <p class="greet-sub">Join the movement</p>
+                    <h1 class="greet-main">Community <span>Challenges</span></h1>
+                </div>
+                <div class="sect-hdr"><span class="sect-title">Active Challenges</span></div>
+                <div id="chal-list"><!-- JS --></div>
+                <div class="sect-hdr" style="margin-top:24px;">
+                    <span class="sect-title">Leaderboard</span>
+                    <span class="sect-link">This Month</span>
+                </div>
+                <div id="lb-list"><!-- JS --></div>
+            </div>
+        </section>
+
+        <!-- PROFILE -->
+        <section class="page" id="page-profile">
+            <div class="page-scroll">
+                <div class="greeting">
+                    <p class="greet-sub">Your eco journey</p>
+                    <h1 class="greet-main">My <span>Profile</span></h1>
+                </div>
+
+                <!-- Profile Hero -->
+                <div class="prof-hero">
+                    <div class="prof-avatar" id="prof-avatar">🌱</div>
+                    <div class="prof-details">
+                        <p class="prof-name" id="prof-name">EcoExplorer</p>
+                        <p class="prof-tier" id="prof-tier">🌱 Seedling</p>
+                        <div class="pts-chip">
+                            <span class="pts-val" id="pts-val">0</span>
+                            <span class="pts-lbl">EcoPoints</span>
+                        </div>
+                    </div>
+                    <div class="prof-glow"></div>
+                </div>
+
+                <!-- Tier Progress -->
+                <div class="card">
+                    <div class="card-hdr">
+                        <span class="card-title">Progress to next tier</span>
+                        <span id="next-tier" style="font-size:12px;color:var(--green-500);">🌿 Sprout</span>
+                    </div>
+                    <div class="prog-bar-wrap">
+                        <div class="prog-bar" id="tier-bar" style="width:0%"></div>
+                    </div>
+                    <p class="prog-lbl" id="tier-lbl">0 / 7 actions</p>
+                </div>
+
+                <!-- Badges -->
+                <div class="sect-hdr"><span class="sect-title">Achievement Badges</span></div>
+                <div class="card">
+                    <div class="badges-grid" id="badges-grid"><!-- JS --></div>
+                </div>
+
+                <!-- Rewards -->
+                <div class="sect-hdr" style="margin-top:8px;"><span class="sect-title">Rewards Marketplace</span></div>
+                <div id="rewards-list"><!-- JS --></div>
+
+                <div class="reset-wrap">
+                    <button class="btn-reset" onclick="resetApp()">↺ Reset & Start Over</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── Bottom Nav ─── -->
+        <nav class="bottom-nav" id="bottom-nav">
+            <button class="nav-btn active" id="nav-home"       onclick="navTo('home')">
+                <div class="nav-pip"></div><span class="nav-ico">🏠</span><span class="nav-lbl">Home</span>
+            </button>
+            <button class="nav-btn" id="nav-log"              onclick="navTo('log')">
+                <div class="nav-pip"></div><span class="nav-ico">✅</span><span class="nav-lbl">Log</span>
+            </button>
+            <button class="nav-btn" id="nav-insights"         onclick="navTo('insights')">
+                <div class="nav-pip"></div><span class="nav-ico">📊</span><span class="nav-lbl">Insights</span>
+            </button>
+            <button class="nav-btn" id="nav-challenges"       onclick="navTo('challenges')">
+                <div class="nav-pip"></div><span class="nav-ico">🏆</span><span class="nav-lbl">Challenges</span>
+            </button>
+            <button class="nav-btn" id="nav-profile"          onclick="navTo('profile')">
+                <div class="nav-pip"></div><span class="nav-ico">👤</span><span class="nav-lbl">Profile</span>
+            </button>
+        </nav>
+
+    </div><!-- /screen-main -->
+
+</div><!-- /app -->
+
+<!-- Toast -->
+<div class="toast" id="toast">
+    <span id="toast-ico">🌿</span>
+    <span id="toast-msg">Action logged!</span>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
