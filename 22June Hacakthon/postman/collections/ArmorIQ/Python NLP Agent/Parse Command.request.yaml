@@ -1,0 +1,14 @@
+$kind: http-request
+name: 'Parse Command'
+method: POST
+url: 'http://127.0.0.1:5001/parse'
+order: 1000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "input": "Block suspicious IP 192.168.1.50"
+    }

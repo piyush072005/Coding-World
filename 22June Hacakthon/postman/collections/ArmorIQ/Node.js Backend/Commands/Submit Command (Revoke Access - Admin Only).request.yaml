@@ -1,0 +1,15 @@
+$kind: http-request
+name: 'Submit Command (Revoke Access - Admin Only)'
+method: POST
+url: 'http://localhost:3001/api/command'
+order: 5000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "input": "Revoke access john.doe",
+      "isAdmin": true
+    }

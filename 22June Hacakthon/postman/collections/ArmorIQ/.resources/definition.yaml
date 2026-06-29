@@ -1,0 +1,15 @@
+$kind: collection
+name: 'ArmorIQ — AI Security Automation'
+description: |-
+  Full API collection for ArmorIQ — an AI-powered cybersecurity automation platform.
+  
+  Covers two services:
+  - Node.js Backend (Express, port 3001) — ArmorClaw zero-trust policy engine
+  - Python NLP Agent (Flask, port 5001) — Natural language command parser
+  
+  ArmorClaw enforces 5 zero-trust policies:
+  - POL-001: Admin-only actions require elevated privileges
+  - POL-002: Destructive ops blocked 23:00–05:00 UTC
+  - POL-003: SCAN_SUBNET denied for prefix < /16
+  - POL-004: Reserved gateway IPs are immutable
+  - POL-005: Known-bad IPs cannot be allowlisted

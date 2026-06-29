@@ -1,0 +1,14 @@
+$kind: http-request
+name: 'Submit Command (Block IP)'
+method: POST
+url: 'http://localhost:3001/api/command'
+order: 1000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "input": "Block suspicious IP 192.168.1.50"
+    }

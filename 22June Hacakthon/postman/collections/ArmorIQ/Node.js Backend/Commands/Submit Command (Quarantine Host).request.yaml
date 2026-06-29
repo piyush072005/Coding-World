@@ -1,0 +1,14 @@
+$kind: http-request
+name: 'Submit Command (Quarantine Host)'
+method: POST
+url: 'http://localhost:3001/api/command'
+order: 4000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "input": "Quarantine host db-primary-01"
+    }

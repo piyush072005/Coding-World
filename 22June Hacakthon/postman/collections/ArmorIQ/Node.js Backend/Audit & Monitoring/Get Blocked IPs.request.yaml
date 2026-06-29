@@ -1,0 +1,5 @@
+$kind: http-request
+name: 'Get Blocked IPs'
+method: GET
+url: 'http://localhost:3001/api/blocked-ips'
+order: 4000

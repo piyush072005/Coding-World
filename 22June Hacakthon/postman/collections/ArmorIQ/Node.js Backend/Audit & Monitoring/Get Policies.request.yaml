@@ -1,0 +1,5 @@
+$kind: http-request
+name: 'Get Policies'
+method: GET
+url: 'http://localhost:3001/api/policies'
+order: 5000

@@ -1,0 +1,5 @@
+$kind: http-request
+name: 'Get Audit Logs'
+method: GET
+url: 'http://localhost:3001/api/audit'
+order: 1000

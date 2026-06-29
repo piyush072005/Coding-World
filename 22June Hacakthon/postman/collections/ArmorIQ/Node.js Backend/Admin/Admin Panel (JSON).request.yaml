@@ -1,0 +1,5 @@
+$kind: http-request
+name: 'Admin Panel (JSON)'
+method: GET
+url: 'http://localhost:3001/admin/json'
+order: 1000

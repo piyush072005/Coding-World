@@ -1,0 +1,9 @@
+$kind: http-request
+name: 'Search Audit Logs'
+method: GET
+url: 'http://localhost:3001/api/audit'
+order: 2000
+queryParams:
+  - key: q
+    value: BLOCK_IP
+    description: Search term to filter audit logs

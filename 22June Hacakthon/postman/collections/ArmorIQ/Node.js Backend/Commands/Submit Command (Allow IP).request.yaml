@@ -1,0 +1,89 @@
+$kind: http-request
+name: 'Submit Command (Allow IP)'
+method: POST
+url: 'http://localhost:3001/api/command'
+order: 2000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "input": "Allow IP 203.0.113.10"
+    }
+events:
+  - listen: test
+    script: |-
+      const res = pm.response.json();
+
+      const riskColor = {
+        HIGH: '#e74c3c',
+        MEDIUM: '#f39c12',
+        LOW: '#2ecc71'
+      }[res.parsed_command?.risk_level] || '#95a5a6';
+
+      const statusColor = res.status === 'SUCCESS' ? '#2ecc71' : '#e74c3c';
+
+      const template = `
+        <style>
+          body { font-family: 'Segoe UI', sans-serif; background: #0f1117; color: #e0e0e0; padding: 20px; margin: 0; }
+          .card { background: #1a1d27; border-radius: 10px; padding: 20px; margin-bottom: 16px; border: 1px solid #2a2d3a; }
+          .title { font-size: 20px; font-weight: bold; color: #a78bfa; margin-bottom: 4px; }
+          .subtitle { font-size: 12px; color: #6b7280; margin-bottom: 16px; }
+          .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; color: #fff; }
+          .row { display: flex; justify-content: space-between; align-items: center; margin: 8px 0; }
+          .label { color: #9ca3af; font-size: 13px; }
+          .value { font-size: 13px; font-weight: 600; color: #f3f4f6; }
+          .section-title { font-size: 14px; font-weight: bold; color: #a78bfa; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+          .confidence-bar { background: #2a2d3a; border-radius: 10px; height: 10px; width: 100%; margin-top: 4px; }
+          .confidence-fill { background: linear-gradient(90deg, #a78bfa, #6366f1); border-radius: 10px; height: 10px; }
+          .mono { font-family: monospace; font-size: 11px; color: #9ca3af; word-break: break-all; }
+          hr { border: none; border-top: 1px solid #2a2d3a; margin: 12px 0; }
+        </style>
+
+        <div class="card">
+          <div class="title">🛡️ ArmorIQ Command Result</div>
+          <div class="subtitle">${res.enforcement || 'ArmorClaw'} &nbsp;|&nbsp; ${new Date(res.timestamp).toLocaleString()}</div>
+
+          <div class="row">
+            <span class="label">Status</span>
+            <span class="badge" style="background:${statusColor}">${res.status}</span>
+          </div>
+          <div class="row">
+            <span class="label">Action</span>
+            <span class="value">${res.parsed_command?.action || '—'}</span>
+          </div>
+          <div class="row">
+            <span class="label">Target</span>
+            <span class="value">${res.parsed_command?.target || '—'}</span>
+          </div>
+          <div class="row">
+            <span class="label">Risk Level</span>
+            <span class="badge" style="background:${riskColor}">${res.parsed_command?.risk_level || '—'}</span>
+          </div>
+          <div class="row">
+            <span class="label">Parsed OK</span>
+            <span class="value">${res.parsed_command?.parsed_ok ? '✅ Yes' : '❌ No'}</span>
+          </div>
+
+          <hr/>
+          <div class="label">Confidence</div>
+          <div class="confidence-bar">
+            <div class="confidence-fill" style="width:${(res.parsed_command?.confidence || 0) * 100}%"></div>
+          </div>
+          <div style="text-align:right; font-size:12px; color:#a78bfa; margin-top:4px;">${((res.parsed_command?.confidence || 0) * 100).toFixed(0)}%</div>
+
+          <hr/>
+          <div class="label">Description</div>
+          <div class="value" style="margin-top:4px;">${res.parsed_command?.description || '—'}</div>
+
+          <hr/>
+          <div class="label">Audit ID</div>
+          <div class="mono">${res.audit_id || '—'}</div>
+          <div class="label" style="margin-top:8px;">SHA-256 Hash</div>
+          <div class="mono">${res.sha256_hash || '—'}</div>
+        </div>
+      `;
+
+      pm.visualizer.set(template);

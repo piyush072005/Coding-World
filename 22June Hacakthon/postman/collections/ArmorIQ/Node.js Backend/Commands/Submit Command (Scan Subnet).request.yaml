@@ -1,0 +1,14 @@
+$kind: http-request
+name: 'Submit Command (Scan Subnet)'
+method: POST
+url: 'http://localhost:3001/api/command'
+order: 3000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "input": "Scan subnet 10.0.0.0/24"
+    }
